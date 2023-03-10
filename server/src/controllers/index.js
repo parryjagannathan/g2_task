@@ -6,31 +6,47 @@ exports.get = (req, res) => {
   });
 };
 
-exports.fetchAccounts = async (req, res) => {
-  const data = await DB("financials").pluck("account").distinct();
+exports.fetchAccounts = async (req, res, next) => {
+  try {
+    const data = await DB("financials").pluck("account").distinct();
 
-  res.json({
-    data,
-  });
+    res.json({
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-exports.fetchBusinessUnits = async (req, res) => {
-  const data = await DB("financials").pluck("business_unit").distinct();
+exports.fetchBusinessUnits = async (req, res, next) => {
+  try {
+    const data = await DB("financials").pluck("business_unit").distinct();
 
-  res.json({
-    data,
-  });
+    res.json({
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-exports.fetchFinancialData = async (req, res) => {
-  const { account, business_unit } = req.query;
+exports.fetchFinancialData = async (req, res, next) => {
+  try {
+    const { account, business_unit } = req.query;
 
-  const data = await DB("financials").where({
-    account,
-    business_unit,
-  });
+    if (!account || !business_unit) {
+      throw new Error("account & business_unit are required field");
+    }
 
-  res.json({
-    data,
-  });
+    const data = await DB("financials").where({
+      account,
+      business_unit,
+    });
+
+    res.json({
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
