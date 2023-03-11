@@ -8,7 +8,7 @@ exports.get = (req, res) => {
 
 exports.fetchAccounts = async (req, res, next) => {
   try {
-    const data = await DB("financials").pluck("account").distinct();
+    const data = await DB("accounts");
 
     res.json({
       data,
@@ -20,7 +20,7 @@ exports.fetchAccounts = async (req, res, next) => {
 
 exports.fetchBusinessUnits = async (req, res, next) => {
   try {
-    const data = await DB("financials").pluck("business_unit").distinct();
+    const data = await DB("business_units");
 
     res.json({
       data,
@@ -38,10 +38,29 @@ exports.fetchFinancialData = async (req, res, next) => {
       throw new Error("account & business_unit are required field");
     }
 
-    const data = await DB("financials").where({
-      account,
-      business_unit,
-    });
+    const data = await DB("financial_datas")
+      .innerJoin(
+        "accounts",
+        "financial_datas.account_id",
+        "=",
+        "accounts.account_id"
+      )
+      .innerJoin(
+        "business_units",
+        "financial_datas.business_unit_id",
+        "=",
+        "business_units.business_unit_id"
+      )
+      .innerJoin(
+        "scenarios",
+        "financial_datas.scenario_id",
+        "=",
+        "scenarios.scenario_id"
+      )
+      .innerJoin("months", "financial_datas.month_id", "=", "months.month_id")
+      .where("financial_datas.account_id", account)
+      .where("financial_datas.business_unit_id", business_unit)
+      .orderByRaw(`financial_datas.year desc, financial_datas.month_id desc`);
 
     res.json({
       data,

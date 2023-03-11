@@ -44,21 +44,17 @@ const App = () => {
   const [rowData, setRowData] = useState([]);
 
   const columns = [
+    { field: "account_name", headerName: "Account Name", width: 150 },
+    {
+      field: "business_unit_name",
+      headerName: "Business Unit Name",
+      width: 150,
+    },
+    { field: "scenario_name", headerName: "Scenario", width: 120 },
     { field: "currency", headerName: "Currency", width: 120 },
-    { field: "year", headerName: "Year", width: 100 },
-    { field: "scenario", headerName: "Scenario", width: 120 },
-    { field: "jan", headerName: "Jan", width: 150 },
-    { field: "feb", headerName: "Feb", width: 150 },
-    { field: "mar", headerName: "Mar", width: 150 },
-    { field: "apr", headerName: "Apr", width: 150 },
-    { field: "may", headerName: "May", width: 150 },
-    { field: "jun", headerName: "Jun", width: 150 },
-    { field: "jul", headerName: "Jul", width: 150 },
-    { field: "aug", headerName: "Aug", width: 150 },
-    { field: "sep", headerName: "Sep", width: 150 },
-    { field: "oct", headerName: "Oct", width: 150 },
-    { field: "nov", headerName: "Nov", width: 150 },
-    { field: "dec", headerName: "Dec", width: 150 },
+    { field: "year", headerName: "Year", width: 120 },
+    { field: "month_name", headerName: "Month", width: 120 },
+    { field: "amount", headerName: "Amount", width: 200 },
   ];
 
   useEffect(() => {
@@ -85,10 +81,7 @@ const App = () => {
 
   const handleExport = () => {
     // prettier-ignore
-    const extraInfo = `Account: ${selectedAccount}, Business Unit: ${selectedBusinessUnit}`;
-
-    // prettier-ignore
-    const csvData = extraInfo + "\n" + columns.map((c) => `"${c.headerName}"`).join(",") + "\n" +
+    const csvData = columns.map((c) => `"${c.headerName}"`).join(",") + "\n" +
 
     rowData.map((r) => columns.map((c) => `"${r[c.field]}"`).join(",")).join("\n");
 
@@ -113,7 +106,7 @@ const App = () => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Stack spacing={2} direction="row">
-              <FormControl sx={{ minWidth: 120 }} size="small">
+              <FormControl sx={{ minWidth: 150 }} size="small">
                 <InputLabel id="account-label">Select Account</InputLabel>
                 <Select
                   labelId="account-label"
@@ -124,14 +117,14 @@ const App = () => {
                   onChange={(event) => setSelectedAccount(event.target.value)}
                 >
                   {accounts.map((acc) => (
-                    <MenuItem key={acc} value={acc}>
-                      {acc}
+                    <MenuItem key={acc.account_id} value={acc.account_id}>
+                      {acc.account_name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
 
-              <FormControl sx={{ minWidth: 120 }} size="small">
+              <FormControl sx={{ minWidth: 150 }} size="small">
                 <InputLabel id="business-unit-label">
                   Select Business Unit
                 </InputLabel>
@@ -146,8 +139,11 @@ const App = () => {
                   }
                 >
                   {businessUnits.map((bu) => (
-                    <MenuItem key={bu} value={bu}>
-                      {bu}
+                    <MenuItem
+                      key={bu.business_unit_id}
+                      value={bu.business_unit_id}
+                    >
+                      {bu.business_unit_name}
                     </MenuItem>
                   ))}
                 </Select>
