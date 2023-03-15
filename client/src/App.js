@@ -44,17 +44,27 @@ const App = () => {
   const [rowData, setRowData] = useState([]);
 
   const columns = [
-    { field: "account_name", headerName: "Account Name", width: 150 },
+    { field: "account_name", headerName: "Account", width: 150 },
     {
-      field: "business_unit_name",
-      headerName: "Business Unit Name",
+      field: "business_unit",
+      headerName: "Business Unit",
       width: 150,
     },
-    { field: "scenario_name", headerName: "Scenario", width: 120 },
     { field: "currency", headerName: "Currency", width: 120 },
     { field: "year", headerName: "Year", width: 120 },
-    { field: "month_name", headerName: "Month", width: 120 },
-    { field: "amount", headerName: "Amount", width: 200 },
+    { field: "scenario", headerName: "Scenario", width: 120 },
+    { field: "Jan", headerName: "Jan", width: 120 },
+    { field: "Feb", headerName: "Feb", width: 120 },
+    { field: "Mar", headerName: "Mar", width: 120 },
+    { field: "Apr", headerName: "Apr", width: 120 },
+    { field: "May", headerName: "May", width: 120 },
+    { field: "Jun", headerName: "Jun", width: 120 },
+    { field: "Jul", headerName: "Jul", width: 120 },
+    { field: "Aug", headerName: "Aug", width: 120 },
+    { field: "Sep", headerName: "Sep", width: 120 },
+    { field: "Oct", headerName: "Oct", width: 120 },
+    { field: "Nov", headerName: "Nov", width: 120 },
+    { field: "Dec", headerName: "Dec", width: 120 },
   ];
 
   useEffect(() => {
@@ -63,6 +73,12 @@ const App = () => {
       setBusinessUnits(bu);
     });
   }, []);
+
+  useEffect(() => {
+    if (selectedAccount) {
+      setSelectedBusinessUnit("");
+    }
+  }, [selectedAccount]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();

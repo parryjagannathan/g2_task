@@ -38,7 +38,17 @@ exports.fetchFinancialData = async (req, res, next) => {
       throw new Error("account & business_unit are required field");
     }
 
-    const data = await DB("financial_datas")
+    const financialData = await DB("financial_datas")
+      .select(
+        "financial_datas.id as id",
+        "accounts.account_name as account_name",
+        "business_units.business_unit_name as business_unit",
+        "financial_datas.currency as currency",
+        "financial_datas.year as year",
+        "scenarios.scenario_name as scenario",
+        "months.month_name as month",
+        "financial_datas.amount as amount"
+      )
       .innerJoin(
         "accounts",
         "financial_datas.account_id",
@@ -60,10 +70,45 @@ exports.fetchFinancialData = async (req, res, next) => {
       .innerJoin("months", "financial_datas.month_id", "=", "months.month_id")
       .where("financial_datas.account_id", account)
       .where("financial_datas.business_unit_id", business_unit)
-      .orderByRaw(`financial_datas.year desc, financial_datas.month_id desc`);
+      .orderByRaw(`financial_datas.year asc, financial_datas.month_id asc`);
+
+    const formattedData = financialData.reduce((result, row) => {
+      const {
+        id,
+        account_name,
+        business_unit,
+        currency,
+        year,
+        scenario,
+        month,
+        amount,
+      } = row;
+      const index = result.findIndex(
+        (item) =>
+          item.account_name === account_name &&
+          item.business_unit === business_unit &&
+          item.currency === currency &&
+          item.year === year &&
+          item.scenario === scenario
+      );
+      if (index === -1) {
+        result.push({
+          id,
+          account_name,
+          business_unit,
+          currency,
+          year,
+          scenario,
+          [month]: amount,
+        });
+      } else {
+        result[index][month] = amount;
+      }
+      return result;
+    }, []);
 
     res.json({
-      data,
+      data: formattedData,
     });
   } catch (error) {
     next(error);
